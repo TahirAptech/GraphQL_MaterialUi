@@ -127,7 +127,9 @@ const typeDefs = gql`
     products: [Product] 
     brands: [Brand]
     brand(id:ID!): Brand
-  } 
+    product(pid:ID!): Product
+  }
+
   type Mutation{
       addNewProduct(title:String, image: String, price: String, category: String, by:ID): [Product]
   }
@@ -138,7 +140,8 @@ const controller = {
     Query: {
         products: () => products,
         brands: () => brands,
-        brand: (_, { id }) => brands.find(x => x.id === id)
+        brand: (_, { id }) => brands.find(x => x.id === id),
+        product: (_, { pid }) => products.find(x => x.id === pid)
     },
     Brand: {
         products: (brand) => products.filter(x => x.by == brand.id)
