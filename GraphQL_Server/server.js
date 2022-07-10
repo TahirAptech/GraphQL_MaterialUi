@@ -33,6 +33,12 @@ const brands = [
         products: [],
         country: "Korea"
     },
+    {
+        id: "00016",
+        name: "J.",
+        contact: "03451234657",
+        country: "Pakistan"
+    },
 ]
 const products = [
     {
@@ -72,7 +78,7 @@ const products = [
         by: "00012"
     },
     {
-        id: "0004",
+        id: "0005",
         title: "Lenovo Thinpad",
         image: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
         category: "electronic",
@@ -81,7 +87,7 @@ const products = [
         by: "00015"
     },
     {
-        id: "0004",
+        id: "0006",
         title: "Lenovo Work station",
         image: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
         category: "electronic",
@@ -123,7 +129,7 @@ const typeDefs = gql`
     brand(id:ID!): Brand
   } 
   type Mutation{
-      addNewProduct(id:String, title:String, image: String, price: String, category: String): Product
+      addNewProduct(title:String, image: String, price: String, category: String, by:ID): [Product]
   }
 `;
 
@@ -140,9 +146,8 @@ const controller = {
     Mutation: {
         addNewProduct: (_, { ...product }) => {
             product.id = randomBytes(5).toString("hex");
-            console.log({ ...product });
             products.push({ ...product })
-            return products.find(x => x.id === id);
+            return products;
         }
     },
 }
