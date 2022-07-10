@@ -3,49 +3,44 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-co
 import randomBytes from "randombytes";
 
 // define database
-const authors = [
+// authors and products is like a collection in mongodb.
+const brands = [
     {
         id: "00011",
         name: "HP",
         contact: "03451234657",
-        products: [],
-        city: "Islamabad"
+        //products: [],
+        country: "USA"
     },
     {
-        id: "00011",
-        name: "HP",
+        id: "00012",
+        name: "Dell",
+        contact: "03451234657",
+        // products: [],
+        country: "USA"
+    },
+    {
+        id: "00014",
+        name: "Asus",
+        contact: "03451234657",
+        // products: [],
+        country: "Japan"
+    },
+    {
+        id: "00015",
+        name: "Lenovo",
         contact: "03451234657",
         products: [],
-        city: ""
+        country: "Korea"
     },
-    {
-        id: "00011",
-        name: "HP",
-        contact: "03451234657",
-        products: [],
-        city: "Rawalpindi"
-    },
-    {
-        id: "00011",
-        name: "HP",
-        contact: "03451234657",
-        products: [],
-        city: "Murre"
-    },
-    {
-        id: "00013",
-        name: "DELL",
-        contact: "03452254877",
-        products: [],
-    }
 ]
 const products = [
     {
         id: "0001",
         title: 'Zbook Laptop',
         image: "https://fakestoreapi.com/img/71YAIFU48IL._AC_UL640_QL65_ML3_.jpg",
-        category: "jewelery",
         price: "599",
+        category: "electronic",
         rating: "4.5",
         by: "00011"
     },
@@ -62,19 +57,37 @@ const products = [
         id: "0003",
         title: "DELL Inspiron",
         image: "https://fakestoreapi.com/img/81Zt42ioCgL._AC_SX679_.jpg",
-        category: "electronics",
+        category: "electronic",
         price: "599",
         rating: "4.5",
-        by: "00013"
+        by: "00012"
     },
     {
-        id: "0003",
+        id: "0004",
         title: "DELL Latitude",
         image: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
-        category: "women's clothing",
+        category: "electronic",
         price: "750",
         rating: "4.5",
-        by: "00011"
+        by: "00012"
+    },
+    {
+        id: "0004",
+        title: "Lenovo Thinpad",
+        image: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
+        category: "electronic",
+        price: "750",
+        rating: "4.5",
+        by: "00015"
+    },
+    {
+        id: "0004",
+        title: "Lenovo Work station",
+        image: "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg",
+        category: "electronic",
+        price: "750",
+        rating: "4.5",
+        by: "00015"
     },
 ];
 
@@ -87,6 +100,14 @@ const products = [
 //     }
 // `
 const typeDefs = gql`
+  type Brand {
+    id:ID
+    name: String
+    contact:String
+    country: String
+    products:[Product]
+  }
+
   type Product {
     id:ID
     title: String
@@ -94,30 +115,27 @@ const typeDefs = gql`
     price: String
     category: String
   }
- type Author {
-    id:ID
-    name: String
-    country: String
-    contact:String
-    city:String
-    products:[Product]
-  }
-  
-  # Root Query / Starting Point.
+ 
+ # Root Query / Starting Point.
   type Query {
     products: [Product] 
-    authors: [Author]
-  }
+    brands: [Brand]
+    brand(id:ID!): Brand
+  } 
   type Mutation{
       addNewProduct(id:String, title:String, image: String, price: String, category: String): Product
   }
 `;
 
-//Controller - query resolver
+//Controller - Query Resolver
 const controller = {
     Query: {
         products: () => products,
-        authors: () => authors,
+        brands: () => brands,
+        brand: (_, { id }) => brands.find(x => x.id === id)
+    },
+    Brand: {
+        products: (brand) => products.filter(x => x.by == brand.id)
     },
     Mutation: {
         addNewProduct: (_, { ...product }) => {
@@ -126,11 +144,6 @@ const controller = {
             products.push({ ...product })
             return products.find(x => x.id === id);
         }
-    },
-    Author: {
-        country: () => "Canada",
-        products: (author) => products.filter(x => x.by === author.id),
-        city: (author) => (author && author.city) ? author.city : "Default"
     },
 }
 
