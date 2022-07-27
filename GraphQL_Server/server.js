@@ -120,6 +120,7 @@ const typeDefs = gql`
     image: String
     price: String
     category: String
+    by:ID
   }
  
  # Root Query / Starting Point.
@@ -147,9 +148,10 @@ const controller = {
         products: (brand) => products.filter(x => x.by == brand.id)
     },
     Mutation: {
-        addNewProduct: (_, { ...product }) => {
+        addNewProduct: (_, product) => {
+            console.log(product);
             product.id = randomBytes(5).toString("hex");
-            products.push({ ...product })
+            products.push(product)
             return products;
         }
     },

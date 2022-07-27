@@ -1,0 +1,47 @@
+mutation addNewProduct(
+  $title: String
+  $image: String
+  $price: String
+  $category: String
+  $by: ID
+) {
+  addNewProduct(
+    title: $title
+    image: $image
+    price: $price
+    category: $category
+    by: $by
+  ) {
+    id
+    title
+    category
+    price
+    by
+  }
+}
+
+-----------------------------------------------
+query getProductById($Id: ID!) {
+  product(pid: $Id) {
+    title
+    category
+    price
+    image
+  }
+}
+------------------------------------------------
+query second {
+  brand(id: "00015") {
+    id
+    name
+    contact
+    country
+    products {
+      id
+      title
+      price
+    }
+  }
+}
+
+
